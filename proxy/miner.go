@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NginProject/ngind/M00N"
+	"github.com/NginProject/M00N"
 )
 
 var hasher = M00N.New()
