@@ -30,10 +30,17 @@ func (s *ProxyServer) handleLoginRPC(cs *Session, params map[string]string, id s
 		return false, &ErrorReply{Code: -1, Message: "You are blacklisted"}
 	}
 	cs.login = login
+	cs.workerName = params["pass"]
+        workerVersion := params["agent"]
+ 
+ 	if !workerPattern.MatchString(cs.workerName) {
+ 	    cs.workerName = "0"
+ 	}
+
 	cs.diff = s.config.Proxy.Difficulty
 	cs.nextDiff = cs.diff
 	s.registerSession(cs)
-	log.Printf("Stratum miner connected %v@%v", login, cs.ip)
+	log.Printf("Stratum miner connected %v %v %v@%v", login, cs.workerName, workerVersion, cs.ip)
 	return true, nil
 }
 
@@ -55,7 +62,7 @@ func (s *ProxyServer) handleTCPSubmitRPC(cs *Session, id string, params []string
 	if !ok {
 		return false, &ErrorReply{Code: 25, Message: "Not subscribed"}
 	}
-	return s.handleSubmitRPC(cs, cs.login, id, params)
+	return s.handleSubmitRPC(cs, cs.login, cs.workerName, params)
 }
 
 func (s *ProxyServer) calcNewDiff(cs *Session) int64 {
