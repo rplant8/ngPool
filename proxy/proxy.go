@@ -43,6 +43,7 @@ type Session struct {
 	sync.Mutex
 	conn  *net.TCPConn
 	login string
+	workerName string
 	hashNoNonce string
 	diff int64
 	nextDiff int64
